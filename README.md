@@ -13,3 +13,7 @@ List of technologies that would allow this:
 Resources:  
 https://github.com/r2dbc/r2dbc-client  
 https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-httphandler  
+
+## Errors and fixes
+
+- [Suspending functions in controller](/doc/errors/suspend-function-controller.md) 
