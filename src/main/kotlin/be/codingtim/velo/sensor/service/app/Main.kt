@@ -12,6 +12,12 @@ fun main() {
     val context = AnnotationConfigApplicationContext(ApplicationConfiguration::class.java)
     val handler: HttpHandler = WebHttpHandlerBuilder.applicationContext(context).build()
     val adapter = ReactorHttpHandlerAdapter(handler)
-    HttpServer.create().host("localhost").port(8080).handle(adapter).bindNow()
+    val environment = context.environment
+    //https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-httphandler
+    HttpServer.create()
+            .host(environment.getProperty("netty.host", "localhost"))
+            .port((environment.getProperty("netty.port", "8082").toInt()))
+            .handle(adapter)
+            .bindNow()
     countDownLatch.await()
 }
