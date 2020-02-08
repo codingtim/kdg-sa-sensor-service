@@ -5,7 +5,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 
 internal class HelloControllerTest {
 
-    private val controller = HelloController()
+    private val controller = HelloController("test message")
     private val client = WebTestClient.bindToController(controller).build()
 
     @Test
