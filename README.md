@@ -5,15 +5,11 @@
 ### Performance
 
 As this service should process received events as fast as possible we should pick technologies that allow this.
-List of technologies that would allow this: 
+List of technologies used to allow this: 
 
-- non-blocking IO with kotlin coroutines and r2dbc
 - Spring Webflux stack running on netty
-
-Resources:  
-https://github.com/r2dbc/r2dbc-client  
-https://github.com/r2dbc/r2dbc-h2
-https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-httphandler  
+- non-blocking IO with kotlin coroutines, cleaner and more readable than Flux and Mono types
+- database access with r2dbc to allow reactive database access
 
 ## Errors and fixes
 

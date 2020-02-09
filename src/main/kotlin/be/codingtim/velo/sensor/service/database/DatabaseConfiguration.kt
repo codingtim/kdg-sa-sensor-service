@@ -11,10 +11,13 @@ import org.springframework.data.r2dbc.core.DatabaseClient
 
 @Configuration
 @ComponentScan(basePackageClasses = [DatabaseConfiguration::class])
+//https://r2dbc.io/
+//https://github.com/r2dbc/r2dbc-client
+//https://github.com/r2dbc/r2dbc-h2
 //https://docs.spring.io/spring-data/r2dbc/docs/1.0.x/reference/html/#r2dbc.core
 //https://spring.io/blog/2019/04/12/going-reactive-with-spring-coroutines-and-kotlin-flow
-//https://kotlinlang.org/docs/reference/coroutines/flow.html#flows
 //https://www.baeldung.com/spring-boot-kotlin-coroutines
+//https://kotlinlang.org/docs/reference/coroutines/flow.html#flows
 open class DatabaseConfiguration {
 
     @Bean
