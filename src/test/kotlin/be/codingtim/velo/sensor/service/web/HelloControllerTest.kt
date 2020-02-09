@@ -15,5 +15,7 @@ internal class HelloControllerTest {
                 .uri("/test")
                 .exchange()
                 .expectStatus().is2xxSuccessful
+                .expectBody()
+                .jsonPath("$.message").isEqualTo("test message")
     }
 }
