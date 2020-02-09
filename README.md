@@ -12,6 +12,7 @@ List of technologies that would allow this:
 
 Resources:  
 https://github.com/r2dbc/r2dbc-client  
+https://github.com/r2dbc/r2dbc-h2
 https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-httphandler  
 
 ## Errors and fixes
