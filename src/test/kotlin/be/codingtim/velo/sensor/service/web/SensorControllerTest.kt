@@ -17,12 +17,12 @@ internal class SensorControllerTest {
     private val sensorValues = DummySensorValues()
     private val controller = SensorController(sensorValues)
 
-    private val objectMapper = createObjectMapper();
+    private val objectMapper = createObjectMapper()
     private val client = WebTestClient
             .bindToController(controller)
             .httpMessageCodecs { configurer ->
-                configurer.defaultCodecs().jackson2JsonDecoder(Jackson2JsonDecoder(objectMapper));
-                configurer.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(objectMapper));
+                configurer.defaultCodecs().jackson2JsonDecoder(Jackson2JsonDecoder(objectMapper))
+                configurer.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(objectMapper))
             }
             .build()
 
@@ -60,6 +60,10 @@ internal class SensorControllerTest {
 
         override suspend fun getAll(): List<SensorValue> {
             return values
+        }
+
+        override suspend fun size(): Long {
+            return values.size.toLong()
         }
 
     }

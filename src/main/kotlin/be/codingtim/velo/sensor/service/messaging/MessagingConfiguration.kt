@@ -1,10 +1,14 @@
 package be.codingtim.velo.sensor.service.messaging
 
+import be.codingtim.velo.sensor.service.domain.SensorValues
+import be.codingtim.velo.sensor.service.web.createObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.rabbitmq.client.ConnectionFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.DependsOn
 
 
 @Configuration
@@ -36,5 +40,18 @@ open class MessagingConfiguration {
                           @Value("\${rabbitmq.routingKey}") routingKey: String
     ): QueueCreator {
         return QueueCreator().init(connectionFactory, exchange, queue, routingKey)
+    }
+
+    @Bean
+    @DependsOn("queueCreator")
+    open fun sensorValueMessageConsumer(connectionFactory: ConnectionFactory,
+                                        sensorValues: SensorValues,
+                                        @Value("\${rabbitmq.queue}") queue: String): SensorValueMessageConsumer {
+        // https://www.rabbitmq.com/api-guide.html#consuming
+        val connection = connectionFactory.newConnection()
+        val channel = connection.createChannel()
+        val sensorValueMessageConsumer = SensorValueMessageConsumer(sensorValues, createObjectMapper(), channel)
+        channel.basicConsume(queue, true, sensorValueMessageConsumer)
+        return sensorValueMessageConsumer
     }
 }

@@ -40,4 +40,11 @@ internal class SensorValuesStoreDatabase(private val databaseClient: DatabaseCli
                 .collect { result.add(it) }
         return result
     }
+
+    override suspend fun size(): Long {
+        return databaseClient.execute("select count(*) from SENSOR_VALUE")
+                .map { row, _ -> row.get(0, java.lang.Long::class.java)?.toLong() ?: 0 }
+                .one()
+                .awaitFirstOrNull() ?: 0
+    }
 }

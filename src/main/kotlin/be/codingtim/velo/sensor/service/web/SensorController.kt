@@ -23,11 +23,19 @@ class SensorController(private val sensorValues: SensorValues) {
         sensorValues.add(sensorValue)
         return ResponseEntity.accepted().build()
     }
+
     @RequestMapping(method = [RequestMethod.GET],
             produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     suspend fun getAll(): ResponseEntity<List<SensorValue>> {
         return ResponseEntity.ok().body(sensorValues.getAll())
+    }
+
+    @RequestMapping(path = ["/size"], method = [RequestMethod.GET],
+            produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    suspend fun size(): ResponseEntity<Long> {
+        return ResponseEntity.ok().body(sensorValues.size())
     }
 
 }
