@@ -1,5 +1,7 @@
 package be.codingtim.velo.sensor.service.database
 
+import be.codingtim.velo.sensor.service.domain.Before
+import be.codingtim.velo.sensor.service.domain.Limit
 import be.codingtim.velo.sensor.service.domain.SensorValue
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.runBlocking
@@ -71,7 +73,9 @@ internal class SensorValuesStoreDatabaseTest(
             sensorValuesStoreDatabase.store(sensorValue1)
             sensorValuesStoreDatabase.store(sensorValue2)
             sensorValuesStoreDatabase.store(sensorValue3)
-            val values = sensorValuesStoreDatabase.retrieve(Instant.parse("2020-02-11T15:46:30.000Z"), 3)
+            val values = sensorValuesStoreDatabase.retrieve(
+                    Before(Instant.parse("2020-02-11T15:46:30.000Z")),
+                    Limit(3))
             assertEquals(2, values.size)
             assertEquals(sensorValue2, values[0])
             assertEquals(sensorValue1, values[1])
@@ -105,7 +109,10 @@ internal class SensorValuesStoreDatabaseTest(
             sensorValuesStoreDatabase.store(sensorValue1)
             sensorValuesStoreDatabase.store(sensorValue2)
             sensorValuesStoreDatabase.store(sensorValue3)
-            val values = sensorValuesStoreDatabase.retrieve(Instant.parse("2020-02-11T15:46:30.000Z"), 1)
+            val values = sensorValuesStoreDatabase.retrieve(
+                    Before(Instant.parse("2020-02-11T15:46:30.000Z")),
+                    Limit(1)
+            )
             assertEquals(1, values.size)
             assertEquals(sensorValue2, values[0])
         }

@@ -1,5 +1,7 @@
 package be.codingtim.velo.sensor.service.web
 
+import be.codingtim.velo.sensor.service.domain.Before
+import be.codingtim.velo.sensor.service.domain.Limit
 import be.codingtim.velo.sensor.service.domain.SensorValue
 import be.codingtim.velo.sensor.service.domain.SensorValues
 import org.springframework.http.MediaType
@@ -32,8 +34,8 @@ class SensorController(
             @RequestParam(required = false) limit: Int?
     ): ResponseEntity<List<SensorValue>> {
         val sensorValues = sensorValues.get(
-                before ?: Instant.now(clock),
-                limit ?: 50
+                Before.of(before, clock),
+                Limit.of(limit)
         )
         return ResponseEntity.ok().body(sensorValues)
     }

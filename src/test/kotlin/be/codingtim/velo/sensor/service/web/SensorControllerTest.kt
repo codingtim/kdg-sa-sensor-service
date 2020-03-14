@@ -1,5 +1,7 @@
 package be.codingtim.velo.sensor.service.web
 
+import be.codingtim.velo.sensor.service.domain.Before
+import be.codingtim.velo.sensor.service.domain.Limit
 import be.codingtim.velo.sensor.service.domain.SensorValue
 import be.codingtim.velo.sensor.service.domain.SensorValues
 import kotlinx.coroutines.runBlocking
@@ -63,8 +65,8 @@ internal class SensorControllerTest {
                 .uri("/sensor-values")
                 .exchange()
                 .expectStatus().isOk
-        assertEquals(Instant.parse("2020-03-14T18:50:00.000Z"), sensorValues.after)
-        assertEquals(50, sensorValues.limit)
+        assertEquals(Before(Instant.parse("2020-03-14T18:50:00.000Z")), sensorValues.before)
+        assertEquals(Limit(50), sensorValues.limit)
     }
 
     @Test
@@ -74,14 +76,14 @@ internal class SensorControllerTest {
                 .uri("/sensor-values?before=2020-02-11T15:45:00.000Z&limit=10")
                 .exchange()
                 .expectStatus().isOk
-        assertEquals(Instant.parse("2020-02-11T15:45:00.000Z"), sensorValues.after)
-        assertEquals(10, sensorValues.limit)
+        assertEquals(Before(Instant.parse("2020-02-11T15:45:00.000Z")), sensorValues.before)
+        assertEquals(Limit(10), sensorValues.limit)
     }
 
     private class DummySensorValues : SensorValues {
         private val values = mutableListOf<SensorValue>()
-        var after: Instant? = null
-        var limit: Int? = null
+        var before: Before? = null
+        var limit: Limit? = null
 
         override suspend fun add(sensorValue: SensorValue) {
             values.add(sensorValue)
@@ -91,8 +93,8 @@ internal class SensorControllerTest {
             return values
         }
 
-        override suspend fun get(before: Instant, limit: Int): List<SensorValue> {
-            this.after = before;
+        override suspend fun get(before: Before, limit: Limit): List<SensorValue> {
+            this.before = before;
             this.limit = limit;
             return values
         }

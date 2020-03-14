@@ -1,5 +1,7 @@
 package be.codingtim.velo.sensor.service.database
 
+import be.codingtim.velo.sensor.service.domain.Before
+import be.codingtim.velo.sensor.service.domain.Limit
 import be.codingtim.velo.sensor.service.domain.SensorValue
 import be.codingtim.velo.sensor.service.domain.SensorValuesStore
 import io.r2dbc.spi.Row
@@ -35,11 +37,11 @@ internal class SensorValuesStoreDatabase(private val databaseClient: DatabaseCli
         return result
     }
 
-    override suspend fun retrieve(before: Instant, limit: Int): List<SensorValue> {
+    override suspend fun retrieve(before: Before, limit: Limit): List<SensorValue> {
         val result = mutableListOf<SensorValue>()
         databaseClient.execute("select * from SENSOR_VALUE where timestamp < :before order by timestamp DESC LIMIT :limit")
-                .bind("before", before)
-                .bind("limit", limit)
+                .bind("before", before.value)
+                .bind("limit", limit.value)
                 .map { row, _ -> mapToSensorValue(row) }
                 .all()
                 .asFlow()
