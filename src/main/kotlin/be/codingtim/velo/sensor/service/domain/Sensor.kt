@@ -13,6 +13,7 @@ interface SensorValues {
     suspend fun add(sensorValue: SensorValue)
     suspend fun getAll(): List<SensorValue>
     suspend fun size(): Long
+    suspend fun get(before: Instant): List<SensorValue>
 }
 
 @Service
@@ -25,6 +26,10 @@ internal class SensorValuesImpl(private val sensorValuesStore: SensorValuesStore
         return sensorValuesStore.retrieveAll()
     }
 
+    override suspend fun get(before: Instant): List<SensorValue> {
+        return sensorValuesStore.retrieve(before)
+    }
+
     override suspend fun size(): Long {
         return sensorValuesStore.size()
     }
@@ -33,5 +38,6 @@ internal class SensorValuesImpl(private val sensorValuesStore: SensorValuesStore
 interface SensorValuesStore {
     suspend fun store(sensorValue: SensorValue)
     suspend fun retrieveAll(): List<SensorValue>
+    suspend fun retrieve(before: Instant): List<SensorValue>
     suspend fun size(): Long
 }

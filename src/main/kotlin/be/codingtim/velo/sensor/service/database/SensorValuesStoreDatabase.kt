@@ -2,6 +2,7 @@ package be.codingtim.velo.sensor.service.database
 
 import be.codingtim.velo.sensor.service.domain.SensorValue
 import be.codingtim.velo.sensor.service.domain.SensorValuesStore
+import io.r2dbc.spi.Row
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
@@ -26,15 +27,18 @@ internal class SensorValuesStoreDatabase(private val databaseClient: DatabaseCli
     override suspend fun retrieveAll(): List<SensorValue> {
         val result = mutableListOf<SensorValue>()
         databaseClient.execute("select * from SENSOR_VALUE")
-                .map { row, _ ->
-                    SensorValue(
-                            row.get("timestamp", Instant::class.java)!!,
-                            row.get("type", String::class.java)!!,
-                            row.get("value", String::class.java)!!,
-                            row.get("latitude", java.lang.Double::class.java)!!.toDouble(),
-                            row.get("longitude", java.lang.Double::class.java)!!.toDouble()
-                    )
-                }
+                .map { row, _ -> mapToSensorValue(row) }
+                .all()
+                .asFlow()
+                .collect { result.add(it) }
+        return result
+    }
+
+    override suspend fun retrieve(before: Instant): List<SensorValue> {
+        val result = mutableListOf<SensorValue>()
+        databaseClient.execute("select * from SENSOR_VALUE where timestamp < :before order by timestamp DESC")
+                .bind("before", before)
+                .map { row, _ -> mapToSensorValue(row) }
                 .all()
                 .asFlow()
                 .collect { result.add(it) }
@@ -46,5 +50,15 @@ internal class SensorValuesStoreDatabase(private val databaseClient: DatabaseCli
                 .map { row, _ -> row.get(0, java.lang.Long::class.java)?.toLong() ?: 0 }
                 .one()
                 .awaitFirstOrNull() ?: 0
+    }
+
+    private fun mapToSensorValue(row: Row): SensorValue {
+        return SensorValue(
+                row.get("timestamp", Instant::class.java)!!,
+                row.get("type", String::class.java)!!,
+                row.get("value", String::class.java)!!,
+                row.get("latitude", Double::class.java)!!.toDouble(),
+                row.get("longitude", Double::class.java)!!.toDouble()
+        )
     }
 }

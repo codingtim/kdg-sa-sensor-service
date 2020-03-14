@@ -2,18 +2,18 @@ package be.codingtim.velo.sensor.service.web
 
 import be.codingtim.velo.sensor.service.domain.SensorValue
 import be.codingtim.velo.sensor.service.domain.SensorValues
-import kotlinx.coroutines.delay
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.time.Clock
+import java.time.Instant
 
 @RestController
 @RequestMapping("/sensor-values")
-class SensorController(private val sensorValues: SensorValues) {
+class SensorController(
+        private val sensorValues: SensorValues,
+        private val clock: Clock
+) {
 
     @RequestMapping(method = [RequestMethod.POST],
             consumes = [MediaType.APPLICATION_JSON_VALUE],
@@ -27,8 +27,9 @@ class SensorController(private val sensorValues: SensorValues) {
     @RequestMapping(method = [RequestMethod.GET],
             produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    suspend fun getAll(): ResponseEntity<List<SensorValue>> {
-        return ResponseEntity.ok().body(sensorValues.getAll())
+    suspend fun get(@RequestParam(required = false) before: Instant?): ResponseEntity<List<SensorValue>> {
+        val sensorValues = sensorValues.get(before ?: Instant.now(clock))
+        return ResponseEntity.ok().body(sensorValues)
     }
 
     @RequestMapping(path = ["/size"], method = [RequestMethod.GET],
