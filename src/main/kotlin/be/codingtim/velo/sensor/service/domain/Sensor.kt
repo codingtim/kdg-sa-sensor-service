@@ -17,6 +17,7 @@ data class Before(val value: Instant) {
 }
 
 data class Limit(val value: Int) {
+    // https://dev.to/flbenz/kotlin-and-domain-driven-design-value-objects-4m32
     init {
         require(value > 0) { "Limit should be positive." }
         require(value < 201) { "Limit should be smaller than 200." }
