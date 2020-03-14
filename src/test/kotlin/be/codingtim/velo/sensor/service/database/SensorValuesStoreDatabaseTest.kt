@@ -71,10 +71,43 @@ internal class SensorValuesStoreDatabaseTest(
             sensorValuesStoreDatabase.store(sensorValue1)
             sensorValuesStoreDatabase.store(sensorValue2)
             sensorValuesStoreDatabase.store(sensorValue3)
-            val values = sensorValuesStoreDatabase.retrieve(Instant.parse("2020-02-11T15:46:30.000Z"))
+            val values = sensorValuesStoreDatabase.retrieve(Instant.parse("2020-02-11T15:46:30.000Z"), 3)
             assertEquals(2, values.size)
             assertEquals(sensorValue2, values[0])
             assertEquals(sensorValue1, values[1])
+        }
+    }
+
+    @Test
+    internal fun getAfterWithLimit() {
+        val sensorValue1 = SensorValue(
+                Instant.parse("2020-02-11T15:45:00.000Z"),
+                "CO2",
+                "21.0",
+                51.21311111,
+                4.59305556
+        )
+        val sensorValue2 = SensorValue(
+                Instant.parse("2020-02-11T15:46:00.000Z"),
+                "CO2",
+                "22.0",
+                51.21311111,
+                4.59305556
+        )
+        val sensorValue3 = SensorValue(
+                Instant.parse("2020-02-11T15:47:00.000Z"),
+                "CO2",
+                "23.0",
+                51.21311111,
+                4.59305556
+        )
+        runBlocking {
+            sensorValuesStoreDatabase.store(sensorValue1)
+            sensorValuesStoreDatabase.store(sensorValue2)
+            sensorValuesStoreDatabase.store(sensorValue3)
+            val values = sensorValuesStoreDatabase.retrieve(Instant.parse("2020-02-11T15:46:30.000Z"), 1)
+            assertEquals(1, values.size)
+            assertEquals(sensorValue2, values[0])
         }
     }
 

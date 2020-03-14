@@ -64,21 +64,24 @@ internal class SensorControllerTest {
                 .exchange()
                 .expectStatus().isOk
         assertEquals(Instant.parse("2020-03-14T18:50:00.000Z"), sensorValues.after)
+        assertEquals(50, sensorValues.limit)
     }
 
     @Test
-    internal fun getBefore() {
+    internal fun getBeforeWithLimit() {
         client
                 .get()
-                .uri("/sensor-values?before=2020-02-11T15:45:00.000Z")
+                .uri("/sensor-values?before=2020-02-11T15:45:00.000Z&limit=10")
                 .exchange()
                 .expectStatus().isOk
         assertEquals(Instant.parse("2020-02-11T15:45:00.000Z"), sensorValues.after)
+        assertEquals(10, sensorValues.limit)
     }
 
     private class DummySensorValues : SensorValues {
         private val values = mutableListOf<SensorValue>()
         var after: Instant? = null
+        var limit: Int? = null
 
         override suspend fun add(sensorValue: SensorValue) {
             values.add(sensorValue)
@@ -88,8 +91,9 @@ internal class SensorControllerTest {
             return values
         }
 
-        override suspend fun get(before: Instant): List<SensorValue> {
+        override suspend fun get(before: Instant, limit: Int): List<SensorValue> {
             this.after = before;
+            this.limit = limit;
             return values
         }
 

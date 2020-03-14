@@ -27,8 +27,14 @@ class SensorController(
     @RequestMapping(method = [RequestMethod.GET],
             produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    suspend fun get(@RequestParam(required = false) before: Instant?): ResponseEntity<List<SensorValue>> {
-        val sensorValues = sensorValues.get(before ?: Instant.now(clock))
+    suspend fun get(
+            @RequestParam(required = false) before: Instant?,
+            @RequestParam(required = false) limit: Int?
+    ): ResponseEntity<List<SensorValue>> {
+        val sensorValues = sensorValues.get(
+                before ?: Instant.now(clock),
+                limit ?: 50
+        )
         return ResponseEntity.ok().body(sensorValues)
     }
 

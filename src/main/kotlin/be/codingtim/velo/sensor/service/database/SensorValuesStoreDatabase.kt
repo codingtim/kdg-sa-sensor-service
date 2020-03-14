@@ -8,6 +8,7 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.data.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Repository
+import java.lang.Double
 import java.time.Instant
 
 @Repository
@@ -34,10 +35,11 @@ internal class SensorValuesStoreDatabase(private val databaseClient: DatabaseCli
         return result
     }
 
-    override suspend fun retrieve(before: Instant): List<SensorValue> {
+    override suspend fun retrieve(before: Instant, limit: Int): List<SensorValue> {
         val result = mutableListOf<SensorValue>()
-        databaseClient.execute("select * from SENSOR_VALUE where timestamp < :before order by timestamp DESC")
+        databaseClient.execute("select * from SENSOR_VALUE where timestamp < :before order by timestamp DESC LIMIT :limit")
                 .bind("before", before)
+                .bind("limit", limit)
                 .map { row, _ -> mapToSensorValue(row) }
                 .all()
                 .asFlow()
