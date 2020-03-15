@@ -31,6 +31,7 @@ internal class SensorControllerTest {
                 configurer.defaultCodecs().jackson2JsonDecoder(Jackson2JsonDecoder(objectMapper))
                 configurer.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(objectMapper))
             }
+            .controllerAdvice(ControllerExceptionHandler())
             .build()
 
     @Test
@@ -78,6 +79,15 @@ internal class SensorControllerTest {
                 .expectStatus().isOk
         assertEquals(Before(Instant.parse("2020-02-11T15:45:00.000Z")), sensorValues.before)
         assertEquals(Limit(10), sensorValues.limit)
+    }
+
+    @Test
+    internal fun getWithInvalidLimit() {
+        client
+                .get()
+                .uri("/sensor-values?limit=-1")
+                .exchange()
+                .expectStatus().isBadRequest
     }
 
     private class DummySensorValues : SensorValues {
