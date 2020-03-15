@@ -7,6 +7,7 @@ import be.codingtim.velo.sensor.service.domain.SensorValues
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.util.UriComponentsBuilder
 import java.time.Clock
 import java.time.Instant
 
@@ -37,7 +38,15 @@ class SensorController(
                 Before.of(before, clock),
                 Limit.of(limit)
         )
-        return ResponseEntity.ok().body(sensorValues)
+        // https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-uri-building
+        // https://developer.github.com/v3/#hypermedia
+        val previousUri = UriComponentsBuilder.fromPath("sensor-values/")
+                .queryParam("before", sensorValues.lastOrNull()?.timestamp)
+                .build()
+                .toString()
+        return ResponseEntity.ok()
+                .header("Link", "<$previousUri>; rel=\"prev\"")
+                .body(sensorValues)
     }
 
     @RequestMapping(path = ["/size"], method = [RequestMethod.GET],
