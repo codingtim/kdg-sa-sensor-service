@@ -16,8 +16,10 @@ List of technologies used to allow this:
 The api can be invoked through HTTP with example call:
 
     curl -XPOST -H "Content-Type: application/json" -d '{"timestamp": "2020-02-11T15:45:00.000Z","type": "CO2","value": "21.0","latitude": 51.21311111,"longitude": 4.59305556}' 'http://localhost:8080/sensor-values' 
-    curl 'http://localhost:8080/sensor-values' 
+    curl -v 'http://localhost:8080/sensor-values' 
     curl 'http://localhost:8080/sensor-values/size' 
+    curl -v 'http://localhost:8080/sensor-values/?before=2020-03-21T09:32:03.433048Z'
+    curl -v 'http://localhost:8080/sensor-values/?limit=100'
 
 ## Errors and fixes
 
